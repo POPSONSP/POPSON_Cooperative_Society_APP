@@ -2,7 +2,7 @@ import time
 import random
 import sys
 import mysql.connector as connection
-myconn = connection.connect(host="127.0.0.1", user="root", passwd="", database="Coop_society")
+myconn = connection.connect(host="127.0.0.1", user="root", passwd="Popson_2013", database="Coop_society")
 cursor = myconn.cursor()
 def welcome():
     time.sleep(1)
@@ -25,7 +25,7 @@ def registration():
         print("Kindly proceed with your registration by providing your details below ")
         val= []
         User_info= ("First_name", "Middle_name", "Last_name", "Gender", "Age","Email_address","Interest", "Pass_word", "User_ID","Loan_Amount","Refund", "Pin")
-        querry= "INSERT INTO User(First_name, Middle_name, Last_name, Gender, Age, Email_address,Interest, Pass_word, User_ID, Loan_Amount,Refund, Pin) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
+        querry= "INSERT INTO User(First_name, Middle_name, Last_name, Gender, Age, Email_address, Interest, Pass_word, User_ID, Loan_Amount,Refund, Pin) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
         for holder in range(12):
             if User_info[holder] == "User_ID":
                 user= "COOP/USER/"+ str(random.randint (37054,39999)) 
@@ -148,8 +148,6 @@ def loan_user():
                         querry_= "UPDATE coop_society.coop_account SET Treasure_Balance = %s where ID = %s"
                         cursor.execute( querry_, val_k_)
                         myconn.commit()
-                        #You are expected to update it to thr treasure account 
-                        # print(Amount_payable)
                         time.sleep(2)
                         print(f"Dear {waitr[1]} {waitr[3]} you have requested for a laon of {loan_am} at an interest rate of 10% \n Amount payable is {Amount_payable} after a period of 24 working days")
                         time.sleep(2)
@@ -163,33 +161,27 @@ def loan_user():
                             querry= "UPDATE User SET Loan_Amount = %s where pin = %s"
                             cursor.execute( querry, val3)
                             myconn.commit()
-                            # query = "SELECT SUM(Loan_Amount) from User"
-                            # val = (4,)
-                            # cursor.execute(query)
-                            # result_p = cursor.fetchone()
-                            # val_k = (result_p[0], 1)
                             acnt= upload[2]+ loan_am
                             val_c= (acnt, 1)
-                            querry_= "UPDATE coop_society.coop_account SET Disbursement= %s where ID = %s"
-                            cursor.execute( querry_, val_c)
+                            querry_= "UPDATE coop_society.coop_account SET Disbursement= %s where ID = %s "
+                            cursor.execute(querry_ , val_c)
                             myconn.commit()
                             val=(1, )
-                            querry= "select * from coop_society.coop_account where ID=%s" 
+                            querry= "select * from coop_society.coop_account where ID=%s " 
                             cursor.execute(querry, val)
                             upload = cursor.fetchone()
-                            treasure= upload[1] - upload[2]
+                            treasure= upload[3] - loan_am
                             val_k_ = (treasure, 1)
-                            querry_= "UPDATE coop_society.coop_account SET Treasure_Balance = %s where ID = %s"
+                            querry_= "UPDATE coop_society.coop_account SET Treasure_Balance = %s where ID = %s "
                             cursor.execute( querry_, val_k_)
                             myconn.commit()
                             time.sleep(2)
                             print("Your loan request has been granted ")
-                            ask= input("would you like to perform another operation: ")
+                            ask= input("would you like to perform another operation: ").lower().strip()
                             if ask== "yes":
                                 operation()
                             elif ask=="no":
                                 sys.exit()
-
                         else:
                             print("You have entered a wrong pin")
                             loan()
@@ -213,16 +205,7 @@ def loan_user():
             loan_user()                       
     else:
         print("You are not a User of the society")
-        loan_user()
-        # query = "SELECT SUM (Loan_Amount) from User"
-        # val = (4,)
-        # cursor.execute(query)
-        # result = cursor.fetchone()
-        # val_k = (result[0], 1)
-        # querry_= "UPDATE Coop_Account SET Disbursement= %s where ID = %s"
-        # cursor.execute( querry_, val_k)
-        # myconn.commit()             
-
+        loan_user()            
 def Eligibility():
     print("Accessing Data page....")
     time.sleep(2)
@@ -267,8 +250,6 @@ def Eligibility():
             print("You have entered a wrong input, Kindly Try Again !!! ")
             time.sleep(2)
             Eligibility()   
-
-
 def Repay_Loan():
     print("Dear User kindly proceed with the repayment process")
     time.sleep(2)
@@ -292,16 +273,16 @@ def Repay_Loan():
             print("Details confirmed")
             while grade[10] != grade[11]:
                 time.sleep(2) 
-                print(f"Dear {grade[1]} {grade[3]} you are Entitled to repay { Amount_payable } for a loan of {resut[10]} at an interest rate of 10%")
+                print(f"Dear {grade[1]} {grade[3]} you are Entitled to repay {Amount_payable} for a loan of {resut[10]} at an interest rate of 10%")
                 time.sleep(2)
                 pay= int(input("Enter Repayment Amount: "))
                 if pay == Amount_payable:
-                    print(f"Dear{grade[1]} {grade[3]} kindly confirm the Refund transaction, ")
+                    print(f"Dear {grade[1]} {grade[3]} kindly confirm the Refund transaction, ")
                     time.sleep(1)
                     print("Kindly provide your Transaction pin ")
                     quest= int(input("Enter your transaction pin: "))
                     time.sleep(2)
-                    if grade[12]==quest:
+                    if grade[12] == quest:
                         print("Wait, While the transaction is been confirmed.... ")
                         time.sleep(2)
                         val_id=(resut[10], req)
@@ -311,17 +292,26 @@ def Repay_Loan():
                         print("Transaction comfirmed.....")
                         time.sleep(2)
                         print("Thank you")
-                        # lkay=int(loan_am - resut[10])
-                        # val_is=(lkay, req)
-                        # querry= "UPDATE User SET Loan_Amount= %s where User_ID = %s"
-                        # cursor.execute( querry, val_is)
-                        # myconn.commit()
                         Interest= Amount_payable - result[10]
                         val_c=(Interest, req)
                         querry="UPDATE User SET Interest=%s where User_ID=%s "
                         cursor.execute(querry, val_c)
                         myconn.commit()
-                        time.sleep(3)
+                        time.sleep(1)
+                        val=(1, )
+                        querry= "select * from coop_society.coop_account where ID=%s" 
+                        cursor.execute(querry, val)
+                        Load = cursor.fetchone()
+                        treas= Load[1] + pay
+                        val_ab = (treas, 1)
+                        querry_a= "UPDATE coop_society.coop_account SET Revenue_Generated = %s where ID = %s"
+                        cursor.execute( querry_a, val_ab)
+                        myconn.commit()
+                        tre= Load[3] + pay
+                        val_k_ = (tre, 1)
+                        querry_= "UPDATE coop_society.coop_account SET Treasure_Balance = %s where ID = %s"
+                        cursor.execute( querry_, val_k_)
+                        myconn.commit()
                         ask= input("will you like to perform another transaction?: ")
                         if ask== "yes":
                             operation()

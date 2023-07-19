@@ -4,7 +4,7 @@ def index():
     time.sleep(3)
     print("""
     Enter 1 to proceed as a member 
-    Enter 2 to proceed as a non user
+    Enter 2 to proceed as a non member
           """)
     response= input(">>> ")
     if response =="1":
@@ -15,5 +15,5 @@ def index():
         welcome() 
     else:
         print("Dear esteemed user you have entered a wrong input, Kindly Try Again !!!")
-        response= input(">>> ")   
+        index()  
 index()            
